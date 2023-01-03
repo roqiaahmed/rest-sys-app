@@ -77,3 +77,10 @@ export default {
   },
 };
 </script>
+<style lang="scss">
+.container {
+  form {
+    width: 80%;
+  }
+}
+</style>

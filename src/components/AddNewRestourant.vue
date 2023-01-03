@@ -1,101 +1,59 @@
 <template>
-  <div class="add">
-    <!-- Button trigger modal -->
-    <button
-      type="button"
-      class="btn btn-primary"
-      data-bs-toggle="modal"
-      data-bs-target="#exampleModal"
-    >
-      Add New Restourant
-    </button>
-
-    <!-- Modal -->
-    <div
-      class="modal fade"
-      id="exampleModal"
-      tabindex="-1"
-      aria-labelledby="exampleModalLabel"
-      aria-hidden="true"
-    >
-      <div class="modal-dialog">
-        <div class="modal-content">
-          <div class="modal-header">
-            <h1 class="modal-title fs-5" id="exampleModalLabel">
-              Add New Restourant
-            </h1>
-            <button
-              type="button"
-              class="btn-close"
-              data-bs-dismiss="modal"
-              aria-label="Close"
-            ></button>
-          </div>
-          <div class="modal-body">
-            <form @click.prevent>
-              <div class="form-group">
-                <input
-                  type="text"
-                  class="form-control"
-                  id="exampleInputEmail1"
-                  aria-describedby="emailHelp"
-                  placeholder="Restourant Name"
-                  style="width: 100%; margin: 15px auto"
-                  v-model="state.Name"
-                />
-                <div class="error" v-if="v$.Name.$error" style="width: 100%">
-                  {{ v$.Name.$errors[0].$message }}
-                </div>
-                <input
-                  type="email"
-                  class="form-control"
-                  id="exampleInputEmail1"
-                  aria-describedby="emailHelp"
-                  placeholder="Phone"
-                  style="width: 100%; margin: 15px auto"
-                  v-model="state.Phone"
-                />
-                <div class="error" v-if="v$.Phone.$error" style="width: 100%">
-                  {{ v$.Phone.$errors[0].$message }}
-                </div>
-              </div>
-              <div class="form-group">
-                <input
-                  type="password"
-                  class="form-control"
-                  id="exampleInputPassword1"
-                  placeholder="location"
-                  style="width: 100%; margin: 15px auto"
-                  v-model="state.location"
-                />
-                <div
-                  class="error"
-                  v-if="v$.location.$error"
-                  style="width: 100%"
-                >
-                  {{ v$.location.$errors[0].$message }}
-                </div>
-              </div>
-            </form>
-          </div>
-          <div class="modal-footer">
-            <button
-              type="button"
-              class="btn btn-secondary"
-              data-bs-dismiss="modal"
-            >
-              Close
-            </button>
-            <button type="button" class="btn btn-primary" @click.prevent="add">
-              Add
-            </button>
-          </div>
+  <div class="modal-body">
+    <form @click.prevent>
+      <div class="form-group">
+        <input
+          type="text"
+          class="form-control"
+          id="exampleInputEmail1"
+          aria-describedby="emailHelp"
+          placeholder="Restourant Name"
+          style="width: 100%; margin: 15px auto"
+          v-model="state.Name"
+        />
+        <div class="error" v-if="v$.Name.$error" style="width: 100%">
+          {{ v$.Name.$errors[0].$message }}
+        </div>
+        <input
+          type="email"
+          class="form-control"
+          id="exampleInputEmail1"
+          aria-describedby="emailHelp"
+          placeholder="Phone"
+          style="width: 100%; margin: 15px auto"
+          v-model="state.Phone"
+        />
+        <div class="error" v-if="v$.Phone.$error" style="width: 100%">
+          {{ v$.Phone.$errors[0].$message }}
         </div>
       </div>
+      <div class="form-group">
+        <input
+          type="password"
+          class="form-control"
+          id="exampleInputPassword1"
+          placeholder="location"
+          style="width: 100%; margin: 15px auto"
+          v-model="state.location"
+        />
+        <div class="error" v-if="v$.location.$error" style="width: 100%">
+          {{ v$.location.$errors[0].$message }}
+        </div>
+      </div>
+      <div class="alert alert-success" v-if="successMessage.length > 0">
+        {{ successMessage }}
+      </div>
+      <div class="alert alert-danger" v-if="dangerMessage.length > 0">
+        {{ dangerMessage }}
+      </div>
+    </form>
+    <div class="modal-footer">
+      <button type="button" class="btn btn-primary" @click.prevent="add()">
+        Add
+      </button>
     </div>
   </div>
 </template>
-
 <script>
 import { reactive, computed } from "vue";
 import { useVuelidate } from "@vuelidate/core";
@@ -112,6 +70,8 @@ export default {
   data() {
     return {
       userId: "",
+      successMessage: "",
+      dangerMessage: "",
     };
   },
   setup() {
@@ -127,42 +87,52 @@ export default {
         location: { required, minLength: minLength(6) },
       };
     });
-
     const v$ = useVuelidate(rules, state);
-    const add = () => {
-      v$.value.$touch();
-      if (!v$.value.$error) {
-        let result = axios.post("http://localhost:3000/restourant", {
-          restourant: state.Name,
-          Phone: state.Phone,
-          location: state.location,
-          userId: 8,
+    return { state, v$ };
+  },
+  methods: {
+    async add() {
+      this.v$.$validate();
+      if (!this.v$.$error) {
+        let result = await axios.post("http://localhost:3000/restourant", {
+          restourant: this.state.Name,
+          Phone: this.state.Phone,
+          location: this.state.location,
+          userId: this.userId,
         });
         console.log(result);
-
-        console.log("pass");
+        if (result.status == 201) {
+          this.successMessage = "Added New location";
+          this.dangerMessage = "";
+          this.$router.push({ name: "home" });
+          setTimeout(() => {
+            this.successMessage = "";
+            this.dangerMessage = "";
+            this.state.Name = "";
+            this.state.Phone = "";
+            this.state.location = "";
+          }, 2000);
+        } else {
+          this.dangerMessage = "something went wrong, try again !";
+          this.successMessage = "";
+        }
       } else {
-        console.log("error");
+        this.dangerMessage = "you must fill all fildes";
+        this.successMessage = "";
       }
-    };
-    // const signupnow = async () => {
-    //   v$.value.$touch();
-    //   let result = await axios.get(
-    //     `http://localhost:3000/user?email=${state.email}&pass=${state.Pass}`
-    //   );
-    //   if (result.status == 200 && result.data.length > 0) {
-    //     let currentUser = result.data[0];
-    //     localStorage.setItem("user", JSON.stringify(currentUser));
-    //     router.push({ name: "home" });
-    //   }
-    // };
-
-    return { state, v$, add };
+    },
   },
 };
 </script>
 <style lang="scss">
-.add {
-  float: left;
+.modal-body {
+  width: 30%;
+  margin: 100px auto;
+  form {
+    width: 50%;
+  }
+  button {
+    margin: 0 auto;
+  }
 }
 </style>

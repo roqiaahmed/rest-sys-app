@@ -5,6 +5,8 @@ import signIn from "../views/signin.vue";
 import profile from "../views/profile/userProfile.vue";
 import updateprofile from "../views/profile/updateProfile.vue";
 import NotFound from "../components/NotFound";
+import AddNewRestourant from "../components/AddNewRestourant.vue";
+import DeleteRestaurant from "../components/DeleteRestaurant.vue";
 const routes = [
   {
     path: "/",
@@ -15,6 +17,11 @@ const routes = [
     path: "/signUP",
     name: "signUP",
     component: signUP,
+  },
+  {
+    path: "/DeleteRestaurant/:id",
+    name: "DeleteRestaurant",
+    component: DeleteRestaurant,
   },
   {
     path: "/signIn",
@@ -30,6 +37,11 @@ const routes = [
     path: "/updateprofile",
     name: "updateprofile",
     component: updateprofile,
+  },
+  {
+    path: "/AddNewRestourant",
+    name: "AddNewRestourant",
+    component: AddNewRestourant,
   },
   { path: "/:pathMatch(.*)", name: "NotFound", component: NotFound },
 ];
