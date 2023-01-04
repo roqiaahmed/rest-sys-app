@@ -107,7 +107,14 @@ export default {
   },
 };
 </script>
-<style>
+<style lang="scss" scoped>
+form {
+  width: 80%;
+  margin: 0 auto;
+}
+button {
+  margin: 0 auto;
+}
 .error {
   width: 25%;
   margin: 0 auto;

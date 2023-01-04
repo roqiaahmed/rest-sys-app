@@ -77,7 +77,7 @@ export default {
   components: { HomePar },
 };
 </script>
-<style lang="scss">
+<style lang="scss" scoped>
 form {
   width: 30%;
   margin: 0 auto;

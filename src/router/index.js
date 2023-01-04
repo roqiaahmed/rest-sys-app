@@ -7,6 +7,8 @@ import updateprofile from "../views/profile/updateProfile.vue";
 import NotFound from "../components/NotFound";
 import AddNewRestourant from "../components/AddNewRestourant.vue";
 import DeleteRestaurant from "../components/DeleteRestaurant.vue";
+import DeleteAll from "../components/DeleteAll.vue";
+import UpDAte from "../components/UpDAte.vue";
 const routes = [
   {
     path: "/",
@@ -22,6 +24,16 @@ const routes = [
     path: "/DeleteRestaurant/:id",
     name: "DeleteRestaurant",
     component: DeleteRestaurant,
+  },
+  {
+    path: "/UpDAte/:id",
+    name: "UpDAte",
+    component: UpDAte,
+  },
+  {
+    path: "/DeleteAll",
+    name: "DeleteAll",
+    component: DeleteAll,
   },
   {
     path: "/signIn",

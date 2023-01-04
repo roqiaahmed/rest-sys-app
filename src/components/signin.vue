@@ -96,11 +96,18 @@ export default {
   },
 };
 </script>
-<style lang="scss">
+<style lang="scss" scoped>
 .error {
   color: #f00;
 }
 span {
   color: #f00;
+}
+form {
+  width: 50%;
+  margin: 0 auto;
+}
+button {
+  margin: 0 auto;
 }
 </style>
